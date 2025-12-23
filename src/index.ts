@@ -10,29 +10,31 @@ export interface IndexNowOptions {
 }
 
 export default function indexNow(
-  options: IndexNowOptions
+  options: IndexNowOptions = {}
 ): AstroIntegration {
+  let site: string | null = null;
+
   return {
     name: "astro-indexnow",
 
     hooks: {
-      "astro:build:done": async ({ dir, config }) => {
-        if (options?.enabled === false) {
+      "astro:config:setup": ({ config }) => {
+        site =
+          options.siteUrl ??
+          (config.site ? config.site.replace(/\/$/, "") : null);
+      },
+
+      "astro:build:done": async ({ dir }) => {
+        if (options.enabled === false) {
           console.log("[astro-indexnow] disabled");
           return;
         }
 
-        if (!options?.key) {
+        if (!options.key) {
           throw new Error(
             "[astro-indexnow] Missing IndexNow key. Provide it in astro.config.mjs."
           );
         }
-
-        const site =
-          options.siteUrl ??
-          (config.site
-            ? config.site.replace(/\/$/, "")
-            : null);
 
         if (!site) {
           throw new Error(
@@ -71,10 +73,46 @@ export default function indexNow(
 
         walk(outDir);
 
-        // TEMP output (next step will replace this)
+        // ✅ KEEP EXISTING LOGGING
         console.log("[astro-indexnow] detected pages:");
         for (const url of urls) {
           console.log(" -", url);
+        }
+
+        if (urls.length === 0) {
+          console.log("[astro-indexnow] no pages detected, skipping submission");
+          return;
+        }
+
+        // ✅ INDEXNOW SUBMISSION (new)
+        try {
+          const response = await fetch("https://api.indexnow.org/indexnow", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              host: new URL(site).host,
+              key: options.key,
+              keyLocation: `${site}/${options.key}.txt`,
+              urlList: urls,
+            }),
+          });
+
+          if (!response.ok) {
+            console.warn(
+              `[astro-indexnow] IndexNow request failed (${response.status})`
+            );
+            return;
+          }
+
+          console.log(
+            `[astro-indexnow] successfully submitted ${urls.length} URLs to IndexNow`
+          );
+        } catch (err) {
+          console.warn(
+            "[astro-indexnow] IndexNow submission failed (network error)"
+          );
         }
       },
     },

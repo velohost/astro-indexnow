@@ -1,0 +1,29 @@
+{
+  "name": "astro-indexnow",
+  "version": "0.0.1",
+  "description": "Astro integration to submit changed pages to IndexNow automatically",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./setup": "./dist/setup.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "astro",
+    "astro-integration",
+    "indexnow",
+    "seo"
+  ],
+  "peerDependencies": {
+    "astro": "^4.0.0 || ^5.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

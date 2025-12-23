@@ -4,7 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 export interface IndexNowOptions {
-  key: string;
+  key?: string;
   siteUrl?: string;
   enabled?: boolean;
 }

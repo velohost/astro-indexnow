@@ -4,8 +4,7 @@
   "description": "Astro integration to submit changed pages to IndexNow automatically",
   "type": "module",
   "exports": {
-    ".": "./dist/index.js",
-    "./setup": "./dist/setup.js"
+    ".": "./dist/index.js"
   },
   "files": [
     "dist"

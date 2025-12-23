@@ -1,35 +1,37 @@
 # astro-indexnow
 
-An Astro integration that automatically submits **changed pages** to **IndexNow**
+An Astro integration that automatically submits **all built pages** to **IndexNow**
 after each build, helping search engines discover updates faster.
 
 Designed to follow Astro’s official integration patterns (like `@astrojs/sitemap`):
+
 - No interactive prompts
-- No secret injection
-- Explicit, config-driven usage
-- CI-safe and deterministic
+- No automatic file mutation
+- Explicit, config‑driven usage
+- CI‑safe and deterministic
+- Zero runtime impact
 
 ---
 
 ## What is IndexNow?
 
 [IndexNow](https://www.indexnow.org/) is a protocol supported by search engines
-like **Bing** and **Yandex** that allows websites to proactively notify them
-when URLs are added, updated, or deleted.
+such as **Bing** and **Yandex** that allows websites to proactively notify them
+when URLs are added or updated.
 
-Instead of waiting for crawlers, your site tells search engines exactly
-what changed.
+Instead of waiting for crawlers, your site directly tells search engines
+which URLs should be re‑crawled.
 
 ---
 
 ## Features
 
 - 🚀 Submits URLs to IndexNow **at build time**
-- 🔁 Only submits **changed pages** (no unnecessary resubmits)
-- 🔒 No secrets stored or prompted — fully explicit config
+- 🔁 Submits **all generated pages** every build (simple & reliable)
+- 🔒 No secrets prompted or stored automatically
 - 🧠 Uses Astro’s `site` config as the canonical base URL
 - 🧪 Safe for CI/CD pipelines
-- 🧩 Zero runtime impact
+- 🧩 No client‑side or runtime code added
 
 ---
 
@@ -39,48 +41,89 @@ what changed.
 npm install astro-indexnow
 ```
 
-or using Astro’s helper:
+Or using Astro’s helper:
 
 ```bash
 npx astro add astro-indexnow
 ```
 
-> Note: Like other Astro integrations, `astro add` installs the integration
-> but does not inject configuration values. See usage below.
+> **Note**  
+> Like other Astro integrations, `astro add` installs the package but does **not**
+> inject configuration values. You must configure it manually (see below).
 
 ---
 
-## Usage
+## Step 1 — Get your IndexNow key
 
-`astro-indexnow` follows the **same configuration pattern as `@astrojs/sitemap`**.
+Generate an IndexNow API key here:
 
-### 1) Configure your site URL
+👉 https://www.bing.com/indexnow/getstarted
 
-IndexNow requires a fully qualified, canonical site URL.
+You will receive:
+- an **API key** (a long string)
+- instructions to create a **key file**
 
-In `astro.config.mjs`:
+---
+
+## Step 2 — Create the key file (required)
+
+IndexNow requires proof that you own the site.
+
+Create a text file named **`<YOUR_KEY>.txt`** in your Astro `public/` directory.
+
+### Example
+
+If your key is:
+
+```
+abcd1234
+```
+
+Create this file:
+
+```
+public/abcd1234.txt
+```
+
+With **exactly this content**:
+
+```
+abcd1234
+```
+
+Astro will automatically copy this file to the build output.
+
+> ⚠️ The plugin does **not** create this file for you.
+
+---
+
+## Step 3 — Configure Astro
+
+Add **both** your site URL and the IndexNow integration
+to `astro.config.mjs`.
+
+### Example
 
 ```js
+// @ts-check
 import { defineConfig } from "astro/config";
-import indexNow from "astro-indexnow";
+import indexnow from "astro-indexnow";
 
 export default defineConfig({
   site: "https://example.com",
 
   integrations: [
-    indexNow({
-      key: "YOUR_INDEXNOW_API_KEY",
+    indexnow({
+      key: "YOUR_INDEXNOW_KEY",
     }),
   ],
 });
 ```
 
----
-
-### 2) Using environment variables (recommended)
+### Using environment variables (recommended)
 
 ```js
-indexNow({
+indexnow({
   key: process.env.INDEXNOW_KEY,
 });
 ```
@@ -97,16 +140,13 @@ Type: `string`
 
 Your IndexNow API key.
 
-You can generate a key at:
-- https://www.indexnow.org/
-
 ---
 
-### `site` (required, from Astro config)
+### `site` (required)
 
 Type: `string`
 
-The integration reads the site’s canonical URL from:
+Set via Astro’s config:
 
 ```js
 defineConfig({
@@ -114,27 +154,42 @@ defineConfig({
 })
 ```
 
-This **must** start with `http://` or `https://`.
+Must begin with `http://` or `https://`.
+
+---
+
+### `enabled` (optional)
+
+Type: `boolean`  
+Default: `true`
+
+Disable IndexNow submissions without removing config:
+
+```js
+indexnow({
+  key: "...",
+  enabled: false,
+});
+```
 
 ---
 
 ## How It Works
 
-At build time, the integration:
+On every `astro build`, the integration:
 
-1. Reads Astro’s output directory
-2. Collects all generated page URLs
-3. Hashes and compares them to the previous build
-4. Submits **only changed URLs** to IndexNow
-5. Saves state for the next build
+1. Reads Astro’s build output directory
+2. Detects all generated pages
+3. Converts them to public URLs
+4. Submits them to IndexNow via a single POST request
 
-No runtime code is added to your site.
+No state is stored and no runtime code is added to your site.
 
 ---
 
 ## CI / Deployment
 
-This integration is designed to work cleanly in CI environments.
+Designed to work cleanly in CI environments.
 
 Example:
 
@@ -148,27 +203,27 @@ No prompts. No interactivity. Fully deterministic.
 
 ## Limitations
 
-- IndexNow submissions only run on `astro build`
-- Requires `site` to be configured
-- Requires a valid IndexNow key
-- Uninstalling the package does not automatically remove config
+- Submissions only run on `astro build`
+- Requires a valid `site` configuration
+- Requires the IndexNow key file to exist
+- Uninstalling the package does not remove config automatically
   (same behaviour as other Astro integrations)
 
 ---
 
-## Inspiration & Philosophy
+## Philosophy
 
 This integration intentionally mirrors the behaviour of
 official Astro integrations such as:
 
 - `@astrojs/sitemap`
 
-Astro integrations are designed to:
-- avoid mutating user config implicitly
-- avoid prompting for secrets
-- rely on explicit configuration
+It avoids:
+- automatic config mutation
+- secret prompting
+- hidden side effects
 
-`astro-indexnow` follows these principles strictly.
+Everything is explicit and predictable.
 
 ---
 

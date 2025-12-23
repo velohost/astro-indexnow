@@ -1,7 +1,7 @@
 {
   "name": "astro-indexnow",
   "version": "0.0.5",
-  "description": "Astro integration to submit changed pages to IndexNow automatically",
+  "description": "Astro integration to submit pages to IndexNow automatically after build",
   "type": "module",
   "exports": {
     ".": "./dist/index.js"
@@ -17,14 +17,28 @@
     "astro",
     "astro-integration",
     "indexnow",
-    "seo"
+    "seo",
+    "search-engine",
+    "bing",
+    "yandex"
   ],
   "peerDependencies": {
     "astro": "^4.0.0 || ^5.0.0"
   },
   "devDependencies": {
     "@types/node": "^25.0.3",
-    "astro-integration-kit": "^0.19.1",
     "typescript": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/velohost/astro-indexnow"
+  },
+  "homepage": "https://velohost.co.uk/tools/astro-indexnow",
+  "bugs": {
+    "url": "https://github.com/velohost/astro-indexnow/issues"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
   }
 }

@@ -3,6 +3,7 @@ node_modules/
 
 # build output
 dist/
+.astro/
 
 # logs
 npm-debug.log*
@@ -20,3 +21,9 @@ pnpm-debug.log*
 # env files
 .env
 .env.*
+
+# typescript
+*.tsbuildinfo
+
+# test coverage
+coverage/

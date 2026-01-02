@@ -201,7 +201,7 @@ Everything is explicit and predictable.
 Built and maintained by **Velohost** — a UK-based platform providing
 free, privacy-first infrastructure and diagnostic tools for developers.
 
-https://velohost.co.uk
+https://velohost.co.uk/
 
 ## License
 

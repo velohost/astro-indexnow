@@ -9,6 +9,24 @@ This project follows **Semantic Versioning**:
 
 ---
 
+## [2.1.0] — 2026-01-21
+
+### ✨ Added
+
+- **Configurable cache directory**
+  - New `cacheDir` option lets you store `.astro-indexnow-cache.json` anywhere (absolute or project-relative)
+  - Automatically creates the cache directory if missing, making it CI/CD friendly
+
+### 🔄 Changed
+
+- README updated with `cacheDir` docs and usage example
+
+### ✅ Compatibility
+
+- Backwards compatible: defaults to the project root when `cacheDir` is omitted
+
+---
+
 ## [2.0.0] — 2026-01-07
 
 ### 🚀 Major release — stateful, production-grade IndexNow integration
@@ -83,7 +101,6 @@ real-world production use, CI/CD pipelines, Docker deployments, and large static
 Planned improvements (no timeline):
 
 - Optional dry-run mode
-- Configurable cache location
 - Sitemap-driven discovery
 - Additional logging controls
 

@@ -7,6 +7,7 @@ export interface IndexNowOptions {
   key?: string;
   siteUrl?: string;
   enabled?: boolean;
+  cacheDir?: string;
 }
 
 export default function indexNow(
@@ -16,7 +17,9 @@ export default function indexNow(
 
   const CACHE_FILENAME = ".astro-indexnow-cache.json";
   const projectRoot = process.cwd();
-  const cachePath = path.join(projectRoot, CACHE_FILENAME);
+  const cachePath = options.cacheDir
+    ? path.resolve(projectRoot, options.cacheDir, CACHE_FILENAME)
+    : path.join(projectRoot, CACHE_FILENAME);
 
   const INDEXNOW_ENDPOINT = "https://api.indexnow.org/indexnow";
   const INDEXNOW_BATCH_SIZE = 10_000;
@@ -26,6 +29,12 @@ export default function indexNow(
      ========================================================= */
 
   function ensureCacheFile(logger: any) {
+    const dir = path.dirname(cachePath);
+    if (!fs.existsSync(dir)) {
+      logger.debug(`[astro-indexnow] creating cache directory: ${dir}`);
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
     const exists = fs.existsSync(cachePath);
     logger.debug(
       `[astro-indexnow] cache exists: ${exists} (${cachePath})`

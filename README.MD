@@ -217,6 +217,17 @@ indexnow({ enabled: false })
 
 ---
 
+### `cacheDir` (optional)
+
+Type: `string`  
+Default: `process.cwd()`
+
+The directory where the `.astro-indexnow-cache.json` file will be stored. Can be an absolute path or relative to the project root.
+
+Example: `./node_modules/.astro`
+
+---
+
 ## IndexNow Limits & Batching
 
 - IndexNow allows **up to 10,000 URLs per request**

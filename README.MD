@@ -258,6 +258,12 @@ such as `@astrojs/sitemap`:
 
 ---
 
+## Contributors
+
+- Thanks to **@web-projects-lab** for adding the configurable `cacheDir` option.
+
+---
+
 ## Maintainer
 
 Built and maintained by **Velohost**  

@@ -9,6 +9,19 @@ This project follows **Semantic Versioning**:
 
 ---
 
+## [2.1.1] — 2026-03-31
+
+### 🛠 Fixed
+
+- **Windows path resolution**
+  - Use `fileURLToPath()` to avoid duplicate drive letters when resolving `outDir`
+
+### ✅ Compatibility
+
+- **Astro v6** added to peer dependency range
+
+---
+
 ## [2.1.0] — 2026-01-21
 
 ### ✨ Added

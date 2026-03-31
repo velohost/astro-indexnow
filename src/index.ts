@@ -2,6 +2,7 @@ import type { AstroIntegration } from "astro";
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
+import { fileURLToPath } from "url";
 
 export interface IndexNowOptions {
   key?: string;
@@ -118,7 +119,7 @@ export default function indexNow(
 
         ensureCacheFile(logger);
 
-        const outDir = new URL(dir).pathname;
+        const outDir = fileURLToPath(dir instanceof URL ? dir : new URL(dir));
 
         const previousCache = loadCache(logger);
         const nextCache: Record<string, string> = {};

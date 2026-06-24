@@ -9,6 +9,7 @@ export interface IndexNowOptions {
   siteUrl?: string;
   enabled?: boolean;
   cacheDir?: string;
+  submissionMode?: "changed" | "all";
 }
 
 export default function indexNow(
@@ -161,7 +162,12 @@ export default function indexNow(
           logger.debug(` - ${url} (${state})`);
         }
 
-        if (changedUrls.length === 0) {
+        const urlsToSubmit =
+          options.submissionMode === "all"
+            ? Object.keys(nextCache)
+            : changedUrls;
+
+        if (urlsToSubmit.length === 0) {
           logger.info(
             "[astro-indexnow] no changed URLs detected, skipping submission"
           );
@@ -169,10 +175,10 @@ export default function indexNow(
           return;
         }
 
-        const batches = chunk(changedUrls, INDEXNOW_BATCH_SIZE);
+        const batches = chunk(urlsToSubmit, INDEXNOW_BATCH_SIZE);
 
         logger.info(
-          `[astro-indexnow] submitting ${changedUrls.length} changed URLs in ${batches.length} batch(es)`
+          `[astro-indexnow] submitting ${urlsToSubmit.length} URL(s) in ${batches.length} batch(es) [mode=${options.submissionMode ?? "changed"}]`
         );
 
         for (let i = 0; i < batches.length; i++) {

@@ -6,7 +6,7 @@ to **IndexNow** after each build.
 This package is designed for **modern CI/CD pipelines**, **Docker-based deployments**, and
 **large static sites**, while remaining fully deterministic and explicit.
 
-> **Current release:** v2.2.0  
+> **Current release:** v2.3.0  
 > **Stateful by design. Changed-only submissions. Batch-safe. CI-aware.**
 
 ---

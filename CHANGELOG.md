@@ -9,6 +9,20 @@ This project follows **Semantic Versioning**:
 
 ---
 
+## [2.3.0] — 2026-06-24
+
+### ✨ Added
+
+- **Submission mode selection**
+  - New `submissionMode` option supports `changed` and `all`
+  - `changed` remains the default to preserve current behavior
+
+### 🔄 Changed
+
+- Internal submission flow now resolves the page set based on `submissionMode`
+
+---
+
 ## [2.2.0] — 2026-06-24
 
 ### ✅ Compatibility

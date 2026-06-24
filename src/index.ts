@@ -10,6 +10,7 @@ export interface IndexNowOptions {
   enabled?: boolean;
   cacheDir?: string;
   dryRun?: boolean;
+  logMode?: "quiet" | "normal" | "verbose";
   submissionMode?: "changed" | "all";
 }
 
@@ -34,17 +35,17 @@ export default function indexNow(
   function ensureCacheFile(logger: any) {
     const dir = path.dirname(cachePath);
     if (!fs.existsSync(dir)) {
-      logger.debug(`[astro-indexnow] creating cache directory: ${dir}`);
+      logger.debug(`creating cache directory: ${dir}`);
       fs.mkdirSync(dir, { recursive: true });
     }
 
     const exists = fs.existsSync(cachePath);
     logger.debug(
-      `[astro-indexnow] cache exists: ${exists} (${cachePath})`
+      `cache exists: ${exists} (${cachePath})`
     );
 
     if (!exists) {
-      logger.debug("[astro-indexnow] creating cache file");
+      logger.debug("creating cache file");
       fs.writeFileSync(cachePath, "{}", "utf8");
     }
   }
@@ -57,17 +58,17 @@ export default function indexNow(
   }
 
   function loadCache(logger: any): Record<string, string> {
-    logger.debug("[astro-indexnow] loading cache file");
+    logger.debug("loading cache file");
     try {
       return JSON.parse(fs.readFileSync(cachePath, "utf8"));
     } catch {
-      logger.warn("[astro-indexnow] cache file unreadable, resetting");
+      logger.warn("cache file unreadable, resetting");
       return {};
     }
   }
 
   function saveCache(logger: any, data: Record<string, string>) {
-    logger.debug("[astro-indexnow] writing cache file");
+    logger.debug("writing cache file");
     fs.writeFileSync(cachePath, JSON.stringify(data, null, 2), "utf8");
   }
 
@@ -77,6 +78,26 @@ export default function indexNow(
       chunks.push(array.slice(i, i + size));
     }
     return chunks;
+  }
+
+  function isQuiet() {
+    return options.logMode === "quiet";
+  }
+
+  function isVerbose() {
+    return options.logMode === "verbose";
+  }
+
+  function logInfo(logger: any, message: string) {
+    if (!isQuiet()) logger.info(message);
+  }
+
+  function logWarn(logger: any, message: string) {
+    if (!isQuiet()) logger.warn(message);
+  }
+
+  function logVerbose(logger: any, message: string) {
+    if (isVerbose()) logger.info(message);
   }
 
   /* =========================================================
@@ -95,8 +116,8 @@ export default function indexNow(
           options.siteUrl ??
           (config.site ? config.site.replace(/\/$/, "") : null);
 
-        logger.debug(
-          `[astro-indexnow] project root: ${projectRoot}`
+        logVerbose(logger,
+          `project root: ${projectRoot}`
         );
 
         ensureCacheFile(logger);
@@ -107,7 +128,7 @@ export default function indexNow(
          ----------------------------------------------- */
       "astro:build:done": async ({ dir, logger }) => {
         if (options.enabled === false) {
-          logger.info("[astro-indexnow] disabled");
+          logInfo(logger, "disabled");
           return;
         }
 
@@ -154,13 +175,15 @@ export default function indexNow(
 
         walk(outDir);
 
-        logger.debug("[astro-indexnow] page diff:");
+        logVerbose(logger, "page diff:");
         for (const url of Object.keys(nextCache)) {
           const state =
             previousCache[url] === nextCache[url]
               ? "unchanged"
               : "new/changed";
-          logger.debug(` - ${url} (${state})`);
+          if (isVerbose()) {
+            logVerbose(logger, ` - ${url} (${state})`);
+          }
         }
 
         const urlsToSubmit =
@@ -169,8 +192,9 @@ export default function indexNow(
             : changedUrls;
 
         if (urlsToSubmit.length === 0) {
-          logger.info(
-            "[astro-indexnow] no changed URLs detected, skipping submission"
+          logInfo(
+            logger,
+            "no changed URLs detected, skipping submission"
           );
           saveCache(logger, nextCache);
           return;
@@ -178,20 +202,29 @@ export default function indexNow(
 
         const batches = chunk(urlsToSubmit, INDEXNOW_BATCH_SIZE);
 
-        logger.info(
-          `[astro-indexnow] submitting ${urlsToSubmit.length} URL(s) in ${batches.length} batch(es) [mode=${options.submissionMode ?? "changed"}]`
+        logInfo(
+          logger,
+          `submitting ${urlsToSubmit.length} URL(s) in ${batches.length} batch(es) [mode=${options.submissionMode ?? "changed"}]`
         );
 
+        if (isVerbose()) {
+          logVerbose(logger, "planned URL list:");
+          for (const url of urlsToSubmit) {
+            logVerbose(logger, ` - ${url}`);
+          }
+        }
+
         if (options.dryRun) {
-          logger.info("[astro-indexnow] dry run enabled, skipping submission");
+          logInfo(logger, "dry run enabled, skipping submission");
           return;
         }
 
         for (let i = 0; i < batches.length; i++) {
           const batch = batches[i];
 
-          logger.debug(
-            `[astro-indexnow] submitting batch ${i + 1}/${batches.length} (${batch.length} URLs)`
+          logVerbose(
+            logger,
+            `submitting batch ${i + 1}/${batches.length} (${batch.length} URLs)`
           );
 
           try {
@@ -207,21 +240,24 @@ export default function indexNow(
             });
 
             if (!response.ok) {
-              logger.warn(
-                `[astro-indexnow] batch ${i + 1} failed (${response.status})`
+              logWarn(
+                logger,
+                `batch ${i + 1} failed (${response.status})`
               );
             }
           } catch {
-            logger.warn(
-              `[astro-indexnow] batch ${i + 1} submission failed (network error)`
+            logWarn(
+              logger,
+              `batch ${i + 1} submission failed (network error)`
             );
           }
         }
 
         saveCache(logger, nextCache);
 
-        logger.info(
-          `[astro-indexnow] IndexNow submission complete`
+        logInfo(
+          logger,
+          `IndexNow submission complete`
         );
       },
     },

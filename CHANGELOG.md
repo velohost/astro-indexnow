@@ -9,6 +9,20 @@ This project follows **Semantic Versioning**:
 
 ---
 
+## [2.3.3] — 2026-06-24
+
+### ✨ Added
+
+- **Configurable logging mode**
+  - New `logMode` option supports `quiet`, `normal`, and `verbose`
+  - Verbose mode now prints the planned URL list directly in build output
+
+### 🔄 Changed
+
+- Integration log output now uses Astro's logger prefix only once
+
+---
+
 ## [2.3.2] — 2026-06-24
 
 ### 🛠 Fixed

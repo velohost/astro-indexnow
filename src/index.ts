@@ -13,6 +13,9 @@ export interface IndexNowOptions {
   logMode?: "quiet" | "normal" | "verbose";
   submissionMode?: "changed" | "all";
   batchSize?: number;
+  retryAttempts?: number;
+  retryBaseDelayMs?: number;
+  retryMaxDelayMs?: number;
 }
 
 export default function indexNow(
@@ -32,6 +35,18 @@ export default function indexNow(
     typeof options.batchSize === "number" && options.batchSize > 0
       ? Math.floor(options.batchSize)
       : INDEXNOW_BATCH_SIZE;
+  const retryAttempts =
+    typeof options.retryAttempts === "number" && options.retryAttempts > 0
+      ? Math.floor(options.retryAttempts)
+      : 3;
+  const retryBaseDelayMs =
+    typeof options.retryBaseDelayMs === "number" && options.retryBaseDelayMs > 0
+      ? Math.floor(options.retryBaseDelayMs)
+      : 1000;
+  const retryMaxDelayMs =
+    typeof options.retryMaxDelayMs === "number" && options.retryMaxDelayMs > 0
+      ? Math.floor(options.retryMaxDelayMs)
+      : 8000;
 
   /* =========================================================
      Helpers
@@ -85,6 +100,10 @@ export default function indexNow(
     return chunks;
   }
 
+  function sleep(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
   function isQuiet() {
     return options.logMode === "quiet";
   }
@@ -103,6 +122,65 @@ export default function indexNow(
 
   function logVerbose(logger: any, message: string) {
     if (isVerbose()) logger.info(message);
+  }
+
+  function isRetryableStatus(status: number) {
+    return status === 429 || (status >= 500 && status < 600);
+  }
+
+  async function submitBatch(
+    logger: any,
+    batch: string[],
+    batchIndex: number
+  ): Promise<boolean> {
+    for (let attempt = 1; attempt <= retryAttempts; attempt++) {
+      try {
+        const response = await fetch(INDEXNOW_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            host: new URL(site as string).host,
+            key: options.key,
+            keyLocation: `${site}/${options.key}.txt`,
+            urlList: batch,
+          }),
+        });
+
+        if (response.ok) {
+          return true;
+        }
+
+        if (!isRetryableStatus(response.status) || attempt === retryAttempts) {
+          logWarn(logger, `batch ${batchIndex} failed (${response.status})`);
+          return false;
+        }
+
+        const delay =
+          Math.min(retryBaseDelayMs * 2 ** (attempt - 1), retryMaxDelayMs) +
+          Math.floor(Math.random() * 250);
+        logWarn(
+          logger,
+          `batch ${batchIndex} attempt ${attempt} failed (${response.status}), retrying in ${delay}ms`
+        );
+        await sleep(delay);
+      } catch {
+        if (attempt === retryAttempts) {
+          logWarn(logger, `batch ${batchIndex} submission failed (network error)`);
+          return false;
+        }
+
+        const delay =
+          Math.min(retryBaseDelayMs * 2 ** (attempt - 1), retryMaxDelayMs) +
+          Math.floor(Math.random() * 250);
+        logWarn(
+          logger,
+          `batch ${batchIndex} submission failed (network error), retrying in ${delay}ms`
+        );
+        await sleep(delay);
+      }
+    }
+
+    return false;
   }
 
   /* =========================================================
@@ -224,46 +302,32 @@ export default function indexNow(
           return;
         }
 
-        for (let i = 0; i < batches.length; i++) {
-          const batch = batches[i];
+    let anyBatchFailed = false;
+
+    for (let i = 0; i < batches.length; i++) {
+      const batch = batches[i];
 
           logVerbose(
             logger,
             `submitting batch ${i + 1}/${batches.length} (${batch.length} URLs)`
           );
 
-          try {
-            const response = await fetch(INDEXNOW_ENDPOINT, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                host: new URL(site).host,
-                key: options.key,
-                keyLocation: `${site}/${options.key}.txt`,
-                urlList: batch,
-              }),
-            });
-
-            if (!response.ok) {
-              logWarn(
-                logger,
-                `batch ${i + 1} failed (${response.status})`
-              );
-            }
-          } catch {
-            logWarn(
-              logger,
-              `batch ${i + 1} submission failed (network error)`
-            );
+          const batchSucceeded = await submitBatch(logger, batch, i + 1);
+          if (!batchSucceeded) {
+            anyBatchFailed = true;
           }
         }
 
         saveCache(logger, nextCache);
 
-        logInfo(
-          logger,
-          `IndexNow submission complete`
-        );
+        if (anyBatchFailed) {
+          logWarn(logger, `IndexNow submission failed`);
+        } else {
+          logInfo(
+            logger,
+            `IndexNow submission complete`
+          );
+        }
       },
     },
   };

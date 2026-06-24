@@ -9,6 +9,16 @@ This project follows **Semantic Versioning**:
 
 ---
 
+## [2.3.5] — 2026-06-24
+
+### 🛠 Fixed
+
+- **Retry outcome reporting**
+  - Exhausted retries now end with `IndexNow submission failed`
+  - Build still completes successfully even when submission fails
+
+---
+
 ## [2.3.4] — 2026-06-24
 
 ### ✨ Added

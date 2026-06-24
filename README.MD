@@ -6,7 +6,7 @@ to **IndexNow** after each build.
 This package is designed for **modern CI/CD pipelines**, **Docker-based deployments**, and
 **large static sites**, while remaining fully deterministic and explicit.
 
-> **Current release:** v2.3.4  
+> **Current release:** v2.3.5  
 > **Stateful by design. `changed` by default, `all` available. Batch-safe. CI-aware.**
 
 ---
@@ -43,6 +43,7 @@ Instead of waiting for crawlers, your site tells search engines exactly which UR
 - 🧪 Optional `dryRun` plans submissions without sending requests
 - 🗣 Optional `logMode` controls verbosity with `quiet`, `normal`, and `verbose`
 - 📦 Optional `batchSize` lets you lower the submit batch size for testing
+- 🔁 Optional retry controls let you tune transient failure handling
 - 🧪 Fully **CI/CD and Docker safe**
 - 🔒 No secrets prompted, stored, or mutated
 - 🧩 No client-side or runtime code added
@@ -315,6 +316,33 @@ indexnow({
   batchSize: 100,
 })
 ```
+
+---
+
+### `retryAttempts` (optional)
+
+Type: `number`
+Default: `3`
+
+Controls how many times a failed batch submission is retried.
+
+---
+
+### `retryBaseDelayMs` (optional)
+
+Type: `number`
+Default: `1000`
+
+Controls the starting delay for exponential backoff between retries.
+
+---
+
+### `retryMaxDelayMs` (optional)
+
+Type: `number`
+Default: `8000`
+
+Controls the maximum backoff delay between retries.
 
 ---
 

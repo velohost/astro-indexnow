@@ -9,6 +9,15 @@ This project follows **Semantic Versioning**:
 
 ---
 
+## [2.2.0] — 2026-06-24
+
+### ✅ Compatibility
+
+- **Astro v7** added to peer dependency range
+- **Node.js 22.12.0+** required to match Astro v7 support
+
+---
+
 ## [2.1.1] — 2026-03-31
 
 ### 🛠 Fixed

@@ -9,6 +9,7 @@ export interface IndexNowOptions {
   siteUrl?: string;
   enabled?: boolean;
   cacheDir?: string;
+  dryRun?: boolean;
   submissionMode?: "changed" | "all";
 }
 
@@ -180,6 +181,11 @@ export default function indexNow(
         logger.info(
           `[astro-indexnow] submitting ${urlsToSubmit.length} URL(s) in ${batches.length} batch(es) [mode=${options.submissionMode ?? "changed"}]`
         );
+
+        if (options.dryRun) {
+          logger.info("[astro-indexnow] dry run enabled, skipping submission");
+          return;
+        }
 
         for (let i = 0; i < batches.length; i++) {
           const batch = batches[i];

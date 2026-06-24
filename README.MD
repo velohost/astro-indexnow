@@ -6,7 +6,7 @@ to **IndexNow** after each build.
 This package is designed for **modern CI/CD pipelines**, **Docker-based deployments**, and
 **large static sites**, while remaining fully deterministic and explicit.
 
-> **Current release:** v2.3.1  
+> **Current release:** v2.3.2  
 > **Stateful by design. `changed` by default, `all` available. Batch-safe. CI-aware.**
 
 ---
@@ -28,6 +28,7 @@ Instead of waiting for crawlers, your site tells search engines exactly which UR
 - 🧠 Stores a small on-disk cache to avoid re-submitting unchanged URLs
 - 📦 **Batches submissions** safely (IndexNow 10,000 URL limit)
 - 🔀 Optional `submissionMode` lets you choose `changed` or `all`
+- 🧪 Optional `dryRun` plans submissions without sending requests
 - 🧪 Fully **CI/CD and Docker safe**
 - 🔒 No secrets prompted, stored, or mutated
 - 🧩 No client-side or runtime code added
@@ -217,6 +218,22 @@ Set to `false` to disable submissions entirely.
 
 ```js
 indexnow({ enabled: false })
+```
+
+---
+
+### `dryRun` (optional)
+
+Type: `boolean`
+Default: `false`
+
+When `true`, the integration performs discovery, diffing, and batching, then logs the plan without sending any IndexNow requests.
+Dry runs do not mutate the cache file.
+
+```js
+indexnow({
+  dryRun: true,
+})
 ```
 
 ---

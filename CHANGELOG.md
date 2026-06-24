@@ -9,6 +9,16 @@ This project follows **Semantic Versioning**:
 
 ---
 
+## [2.3.2] — 2026-06-24
+
+### 🛠 Fixed
+
+- **Dry run cache semantics**
+  - Dry runs now preview diffs and batches without mutating `.astro-indexnow-cache.json`
+  - README updated to explain that dry runs are read-only
+
+---
+
 ## [2.3.1] — 2026-06-24
 
 ### 🛠 Fixed

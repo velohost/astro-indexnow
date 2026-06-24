@@ -11,6 +11,18 @@ This package is designed for **modern CI/CD pipelines**, **Docker-based deployme
 
 ---
 
+## Compatibility Matrix
+
+| Platform | Supported | Notes |
+| --- | --- | --- |
+| Astro | `^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0` | Build-time integration works in static and hybrid builds |
+| Node.js | `>=22.12.0` | Matches Astro v7 runtime floor |
+| Static builds | Yes | Primary supported use case |
+| Hybrid builds | Yes | Works for prerendered output generated at build time |
+| SSR request-time submission | No | Use a webhook or server-side helper instead |
+
+---
+
 ## What is IndexNow?
 
 [IndexNow](https://www.indexnow.org/) is a protocol supported by search engines such as **Bing**
@@ -321,6 +333,7 @@ indexnow({
 - No prompts or side effects
 - No reliance on Git history
 - Deterministic output-based change detection
+- Intended for static and hybrid builds, not SSR request-time submission
 
 ---
 

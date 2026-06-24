@@ -17,6 +17,11 @@ pnpm-debug.log*
 # editor / tooling
 .vscode/
 .idea/
+AGENTS.md
+agents.md
+V3.md
+v3.md
+fixtures/
 
 # env files
 .env

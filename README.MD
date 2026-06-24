@@ -6,7 +6,7 @@ to **IndexNow** after each build.
 This package is designed for **modern CI/CD pipelines**, **Docker-based deployments**, and
 **large static sites**, while remaining fully deterministic and explicit.
 
-> **Current release:** v2.3.3  
+> **Current release:** v2.3.4  
 > **Stateful by design. `changed` by default, `all` available. Batch-safe. CI-aware.**
 
 ---
@@ -30,6 +30,7 @@ Instead of waiting for crawlers, your site tells search engines exactly which UR
 - 🔀 Optional `submissionMode` lets you choose `changed` or `all`
 - 🧪 Optional `dryRun` plans submissions without sending requests
 - 🗣 Optional `logMode` controls verbosity with `quiet`, `normal`, and `verbose`
+- 📦 Optional `batchSize` lets you lower the submit batch size for testing
 - 🧪 Fully **CI/CD and Docker safe**
 - 🔒 No secrets prompted, stored, or mutated
 - 🧩 No client-side or runtime code added
@@ -282,6 +283,24 @@ Controls which URLs are submitted after a build:
 ```js
 indexnow({
   submissionMode: "all",
+})
+```
+
+---
+
+### `batchSize` (optional)
+
+Type: `number`
+Default: `10000`
+
+Controls how many URLs are submitted per IndexNow request.
+
+- The default matches IndexNow’s documented limit
+- Lower values are useful for testing or constrained environments
+
+```js
+indexnow({
+  batchSize: 100,
 })
 ```
 

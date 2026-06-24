@@ -12,6 +12,7 @@ export interface IndexNowOptions {
   dryRun?: boolean;
   logMode?: "quiet" | "normal" | "verbose";
   submissionMode?: "changed" | "all";
+  batchSize?: number;
 }
 
 export default function indexNow(
@@ -27,6 +28,10 @@ export default function indexNow(
 
   const INDEXNOW_ENDPOINT = "https://api.indexnow.org/indexnow";
   const INDEXNOW_BATCH_SIZE = 10_000;
+  const batchSize =
+    typeof options.batchSize === "number" && options.batchSize > 0
+      ? Math.floor(options.batchSize)
+      : INDEXNOW_BATCH_SIZE;
 
   /* =========================================================
      Helpers
@@ -200,11 +205,11 @@ export default function indexNow(
           return;
         }
 
-        const batches = chunk(urlsToSubmit, INDEXNOW_BATCH_SIZE);
+        const batches = chunk(urlsToSubmit, batchSize);
 
         logInfo(
           logger,
-          `submitting ${urlsToSubmit.length} URL(s) in ${batches.length} batch(es) [mode=${options.submissionMode ?? "changed"}]`
+          `submitting ${urlsToSubmit.length} URL(s) in ${batches.length} batch(es) [mode=${options.submissionMode ?? "changed"}, batchSize=${batchSize}]`
         );
 
         if (isVerbose()) {

@@ -9,6 +9,16 @@ This project follows **Semantic Versioning**:
 
 ---
 
+## [2.3.4] — 2026-06-24
+
+### ✨ Added
+
+- **Batch size override**
+  - New `batchSize` option lets users lower the submit batch size for testing or constrained environments
+  - Default remains `10,000` to match IndexNow limits
+
+---
+
 ## [2.3.3] — 2026-06-24
 
 ### ✨ Added

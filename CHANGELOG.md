@@ -7,6 +7,30 @@ This project follows **Semantic Versioning**:
 - MINOR: new features, backwards compatible
 - PATCH: bug fixes and internal improvements
 
+## Release Entry Template
+
+Use this structure for future releases:
+
+```md
+## [X.Y.Z] — YYYY-MM-DD
+
+### ✨ Added
+
+- Feature or capability
+
+### 🔄 Changed
+
+- Behavioural change
+
+### 🛠 Fixed
+
+- Bug fix
+
+### ✅ Compatibility
+
+- Supported version notes
+```
+
 ---
 
 ## [2.3.5] — 2026-06-24

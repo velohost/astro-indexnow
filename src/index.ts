@@ -238,6 +238,8 @@ export default function indexNow(
             if (entry.isDirectory()) walk(fullPath);
 
             if (entry.isFile() && entry.name === "index.html") {
+              // Astro emits one index.html per generated route, so this is the
+              // canonical build artifact to hash and submit.
               const relativePath = path
                 .relative(outDir, fullPath)
                 .replace(/index\.html$/, "")
@@ -247,6 +249,7 @@ export default function indexNow(
                 site + "/" + relativePath.replace(/^\/+/, "");
 
               const hash = hashFile(fullPath);
+              // Cache by URL because IndexNow submits URLs, not filesystem paths.
               nextCache[url] = hash;
 
               if (previousCache[url] !== hash) {

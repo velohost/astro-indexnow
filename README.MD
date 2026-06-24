@@ -137,6 +137,20 @@ Using environment variables is **strongly recommended** for CI/CD.
 This release is backwards compatible with earlier supported package versions.
 Older npm versions are not deprecated by default; they remain supported until a future major release introduces a breaking change.
 
+## Migration Notes
+
+### From v1
+
+- v1 submitted all generated pages after each build
+- v2 and later add cache-based changed-only submissions
+- if you upgrade from v1, the first build may submit more URLs because the cache starts empty
+
+### From v2
+
+- v2.1 added `cacheDir`
+- v2.3 added `submissionMode`, `dryRun`, `logMode`, `batchSize`, and retry controls
+- the current build-time behavior remains compatible with static and hybrid builds
+
 ---
 
 ## How It Works
@@ -154,6 +168,23 @@ This ensures:
 - No duplicate submissions
 - No unnecessary API calls
 - Accurate change detection based on real output
+
+## What Gets Submitted
+
+Only generated HTML pages are scanned and considered for submission.
+
+Included:
+- generated `index.html` pages
+- static pages emitted into the final build output
+
+Ignored:
+- assets
+- RSS or XML feeds
+- JavaScript bundles
+- images
+- any other non-HTML outputs
+
+This integration does not inspect source files directly. It only works from final build output.
 
 ---
 
@@ -362,6 +393,7 @@ Controls the maximum backoff delay between retries.
 - No reliance on Git history
 - Deterministic output-based change detection
 - Intended for static and hybrid builds, not SSR request-time submission
+- Build-time only; use a webhook or server-side flow for SSR updates
 
 ---
 

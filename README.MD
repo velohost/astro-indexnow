@@ -15,7 +15,7 @@ This package is designed for **modern CI/CD pipelines**, **Docker-based deployme
 
 | Platform | Supported | Notes |
 | --- | --- | --- |
-| Astro | `^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0` | Build-time integration works in static and hybrid builds |
+| Astro | 4.x, 5.x, 6.x, 7.x | Build-time integration works in static and hybrid builds |
 | Node.js | `>=22.12.0` | Matches Astro v7 runtime floor |
 | Static builds | Yes | Primary supported use case |
 | Hybrid builds | Yes | Works for prerendered output generated at build time |

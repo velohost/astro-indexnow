@@ -9,6 +9,16 @@ This project follows **Semantic Versioning**:
 
 ---
 
+## [2.3.1] — 2026-06-24
+
+### 🛠 Fixed
+
+- **README release notes**
+  - Clarified `submissionMode` documentation and current release metadata
+  - Added the current patch-level release note for the newly published docs update
+
+---
+
 ## [2.3.0] — 2026-06-24
 
 ### ✨ Added

@@ -6,8 +6,8 @@ to **IndexNow** after each build.
 This package is designed for **modern CI/CD pipelines**, **Docker-based deployments**, and
 **large static sites**, while remaining fully deterministic and explicit.
 
-> **Current release:** v2.3.0  
-> **Stateful by design. Changed-only submissions. Batch-safe. CI-aware.**
+> **Current release:** v2.3.1  
+> **Stateful by design. `changed` by default, `all` available. Batch-safe. CI-aware.**
 
 ---
 
@@ -27,6 +27,7 @@ Instead of waiting for crawlers, your site tells search engines exactly which UR
 - 🔍 **Detects changed pages automatically** using HTML hashing
 - 🧠 Stores a small on-disk cache to avoid re-submitting unchanged URLs
 - 📦 **Batches submissions** safely (IndexNow 10,000 URL limit)
+- 🔀 Optional `submissionMode` lets you choose `changed` or `all`
 - 🧪 Fully **CI/CD and Docker safe**
 - 🔒 No secrets prompted, stored, or mutated
 - 🧩 No client-side or runtime code added
@@ -116,6 +117,9 @@ export default defineConfig({
 ```
 
 Using environment variables is **strongly recommended** for CI/CD.
+
+This release is backwards compatible with earlier supported package versions.
+Older npm versions are not deprecated by default; they remain supported until a future major release introduces a breaking change.
 
 ---
 
@@ -225,6 +229,24 @@ Default: `process.cwd()`
 The directory where the `.astro-indexnow-cache.json` file will be stored. Can be an absolute path or relative to the project root.
 
 Example: `./node_modules/.astro`
+
+---
+
+### `submissionMode` (optional)
+
+Type: `"changed" | "all"`
+Default: `"changed"`
+
+Controls which URLs are submitted after a build:
+
+- `changed` submits only new or modified pages
+- `all` submits every generated page in the current build output
+
+```js
+indexnow({
+  submissionMode: "all",
+})
+```
 
 ---
 

@@ -198,9 +198,11 @@ To detect changes between builds, the integration stores a small cache file:
 
 This file:
 - Is created automatically
-- Contains only URL → hash mappings
+- Contains a small version marker plus URL → hash mappings
 - Contains **no secrets**
 - Is safe to inspect, commit, or delete
+
+Older flat cache files are still read automatically and will be upgraded on the next write.
 
 Deleting the file simply causes the next build to treat all pages as new.
 

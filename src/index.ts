@@ -18,6 +18,11 @@ export interface IndexNowOptions {
   retryMaxDelayMs?: number;
 }
 
+interface CacheFileData {
+  version: 1;
+  entries: Record<string, string>;
+}
+
 export default function indexNow(
   options: IndexNowOptions = {}
 ): AstroIntegration {
@@ -80,7 +85,22 @@ export default function indexNow(
   function loadCache(logger: any): Record<string, string> {
     logger.debug("loading cache file");
     try {
-      return JSON.parse(fs.readFileSync(cachePath, "utf8"));
+      const parsed = JSON.parse(fs.readFileSync(cachePath, "utf8")) as
+        | CacheFileData
+        | Record<string, string>;
+
+      if (
+        parsed &&
+        typeof parsed === "object" &&
+        "version" in parsed &&
+        (parsed as CacheFileData).version === 1 &&
+        "entries" in parsed &&
+        typeof (parsed as CacheFileData).entries === "object"
+      ) {
+        return (parsed as CacheFileData).entries;
+      }
+
+      return parsed as Record<string, string>;
     } catch {
       logger.warn("cache file unreadable, resetting");
       return {};
@@ -89,7 +109,11 @@ export default function indexNow(
 
   function saveCache(logger: any, data: Record<string, string>) {
     logger.debug("writing cache file");
-    fs.writeFileSync(cachePath, JSON.stringify(data, null, 2), "utf8");
+    const cacheFile: CacheFileData = {
+      version: 1,
+      entries: data,
+    };
+    fs.writeFileSync(cachePath, JSON.stringify(cacheFile, null, 2), "utf8");
   }
 
   function chunk<T>(array: T[], size: number): T[][] {

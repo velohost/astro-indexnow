@@ -334,6 +334,12 @@ The `site` value in Astro config may include a path prefix, such as `https://exa
 
 Submitted URLs use the canonical no-trailing-slash form for generated pages, except for the site root itself.
 
+### Monorepo note
+
+- The cache path is resolved from `process.cwd()` unless you override `cacheDir`.
+- In a monorepo, that means the cache is written relative to the package you run `astro build` from, not the repository root.
+- If your Astro app lives in a nested workspace, set `cacheDir` explicitly so the cache lands where you expect it.
+
 ---
 
 ### `submissionMode` (optional)

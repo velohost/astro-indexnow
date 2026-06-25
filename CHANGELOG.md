@@ -41,6 +41,9 @@ Use this structure for future releases:
   - Explained when `.astro-indexnow-cache.json` should be committed
   - Explained what happens when the cache is deleted
   - Explained how the cache behaves in CI/CD and branch builds
+- Added monorepo compatibility notes
+  - Clarified `process.cwd()` assumptions
+  - Explained how `cacheDir` behaves in nested Astro workspaces
 
 ---
 

@@ -261,6 +261,9 @@ export default function indexNow(
 
         walk(outDir);
 
+        const scannedCount = Object.keys(nextCache).length;
+        const changedCount = changedUrls.length;
+
         logVerbose(logger, "page diff:");
         for (const url of Object.keys(nextCache)) {
           const state =
@@ -287,10 +290,16 @@ export default function indexNow(
         }
 
         const batches = chunk(urlsToSubmit, batchSize);
+        const batchCount = batches.length;
 
         logInfo(
           logger,
           `submitting ${urlsToSubmit.length} URL(s) in ${batches.length} batch(es) [mode=${options.submissionMode ?? "changed"}, batchSize=${batchSize}]`
+        );
+
+        logInfo(
+          logger,
+          `summary: scanned=${scannedCount}, changed=${changedCount}, batched=${batchCount}, submitted=${urlsToSubmit.length}`
         );
 
         if (isVerbose()) {

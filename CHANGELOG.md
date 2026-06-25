@@ -33,6 +33,16 @@ Use this structure for future releases:
 
 ---
 
+## [2.3.6] — 2026-06-25
+
+### 🛠 Fixed
+
+- **Submission diagnostics summary**
+  - Added a compact summary for scanned, changed, batched, and submitted counts
+  - Keeps verbose URL details opt-in only
+
+---
+
 ## [2.3.5] — 2026-06-24
 
 ### 🛠 Fixed

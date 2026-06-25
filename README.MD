@@ -6,7 +6,7 @@ to **IndexNow** after each build.
 This package is designed for **modern CI/CD pipelines**, **Docker-based deployments**, and
 **large static sites**, while remaining fully deterministic and explicit.
 
-> **Current release:** v2.3.7  
+> **Current release:** v2.3.8  
 > **Stateful by design. `changed` by default, `all` available. Batch-safe. CI-aware.**
 
 ---
@@ -313,6 +313,10 @@ Default: `process.cwd()`
 The directory where the `.astro-indexnow-cache.json` file will be stored. Can be an absolute path or relative to the project root.
 
 Example: `./node_modules/.astro`
+
+The `site` value in Astro config may include a path prefix, such as `https://example.com/blog`. The integration preserves that base path when building submission URLs.
+
+Submitted URLs use the canonical no-trailing-slash form for generated pages, except for the site root itself.
 
 ---
 

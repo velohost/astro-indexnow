@@ -128,6 +128,21 @@ export default function indexNow(
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
+  function normalizeSiteUrl(value: string): string {
+    const url = new URL(value);
+    const normalizedPath = url.pathname.replace(/\/+$/, "").replace(/\/+/g, "/");
+    url.pathname = normalizedPath || "/";
+    return url.toString().replace(/\/$/, "");
+  }
+
+  function normalizeSubmittedUrl(value: string): string {
+    const url = new URL(value);
+    if (url.pathname !== "/") {
+      url.pathname = url.pathname.replace(/\/+$/, "");
+    }
+    return url.toString();
+  }
+
   function isQuiet() {
     return options.logMode === "quiet";
   }
@@ -220,8 +235,11 @@ export default function indexNow(
          ----------------------------------------------- */
       "astro:config:setup": ({ config, logger }) => {
         site =
-          options.siteUrl ??
-          (config.site ? config.site.replace(/\/$/, "") : null);
+          options.siteUrl
+            ? normalizeSiteUrl(options.siteUrl)
+            : config.site
+              ? normalizeSiteUrl(config.site)
+              : null;
 
         logVerbose(logger,
           `project root: ${projectRoot}`
@@ -269,8 +287,10 @@ export default function indexNow(
                 .replace(/index\.html$/, "")
                 .replace(/\\/g, "/");
 
-              const url =
-                site + "/" + relativePath.replace(/^\/+/, "");
+              const url = normalizeSubmittedUrl(new URL(
+                relativePath.replace(/^\/+/, ""),
+                `${site}/`
+              ).toString());
 
               const hash = hashFile(fullPath);
               // Cache by URL because IndexNow submits URLs, not filesystem paths.
@@ -338,10 +358,10 @@ export default function indexNow(
           return;
         }
 
-    let anyBatchFailed = false;
+        let anyBatchFailed = false;
 
-    for (let i = 0; i < batches.length; i++) {
-      const batch = batches[i];
+        for (let i = 0; i < batches.length; i++) {
+          const batch = batches[i];
 
           logVerbose(
             logger,
@@ -354,16 +374,17 @@ export default function indexNow(
           }
         }
 
-        saveCache(logger, nextCache);
-
         if (anyBatchFailed) {
           logWarn(logger, `IndexNow submission failed`);
-        } else {
-          logInfo(
+          logWarn(
             logger,
-            `IndexNow submission complete`
+            "cache left unchanged because one or more submissions failed"
           );
+          return;
         }
+
+        saveCache(logger, nextCache);
+        logInfo(logger, `IndexNow submission complete`);
       },
     },
   };

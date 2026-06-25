@@ -33,6 +33,16 @@ Use this structure for future releases:
 
 ---
 
+## [2.3.8] — 2026-06-25
+
+### 🛠 Fixed
+
+- **Canonical URL formatting**
+  - Generated URLs now omit trailing slashes except for the site root
+  - Subpath `siteUrl` values still preserve their prefix
+
+---
+
 ## [2.3.7] — 2026-06-25
 
 ### 🛠 Fixed

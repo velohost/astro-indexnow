@@ -1,6 +1,6 @@
 {
   "name": "astro-indexnow",
-  "version": "2.3.6",
+  "version": "2.3.7",
   "description": "Astro integration to submit pages to IndexNow automatically after build",
   "type": "module",
   "exports": {

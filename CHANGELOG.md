@@ -33,6 +33,15 @@ Use this structure for future releases:
 
 ---
 
+## [2.3.7] — 2026-06-25
+
+### 🛠 Fixed
+
+- **Cache format versioning**
+  - Cache files now include a version marker and still load legacy flat cache data
+
+---
+
 ## [2.3.6] — 2026-06-25
 
 ### 🛠 Fixed

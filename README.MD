@@ -6,7 +6,7 @@ to **IndexNow** after each build.
 This package is designed for **modern CI/CD pipelines**, **Docker-based deployments**, and
 **large static sites**, while remaining fully deterministic and explicit.
 
-> **Current release:** v2.3.8  
+> **Current release:** v2.3.9  
 > **Stateful by design. `changed` by default, `all` available. Batch-safe. CI-aware.**
 
 ---
@@ -136,6 +136,15 @@ Using environment variables is **strongly recommended** for CI/CD.
 
 This release is backwards compatible with earlier supported package versions.
 Older npm versions are not deprecated by default; they remain supported until a future major release introduces a breaking change.
+
+## Release Rollback Policy
+
+If a published version is found to be broken:
+
+- Prefer `npm deprecate` for the affected version if users should avoid it.
+- Publish a patch release with the fix rather than rewriting the bad version.
+- Create a new git tag and GitHub release for the patched version.
+- Keep the changelog explicit about which version is bad and which version supersedes it.
 
 ## Migration Notes
 
@@ -339,6 +348,28 @@ Submitted URLs use the canonical no-trailing-slash form for generated pages, exc
 - The cache path is resolved from `process.cwd()` unless you override `cacheDir`.
 - In a monorepo, that means the cache is written relative to the package you run `astro build` from, not the repository root.
 - If your Astro app lives in a nested workspace, set `cacheDir` explicitly so the cache lands where you expect it.
+
+---
+
+### `buildOutputDir` (optional)
+
+Type: `string`  
+Default: Astro's build output directory
+
+Overrides the directory the integration scans for generated HTML.
+
+Use this if:
+- your build output lives somewhere other than Astro's default `dist`
+- you want to point the integration at a custom generated output directory
+- you need to scan a fixture or alternate build target in CI
+
+The path is resolved from the project root when relative.
+
+```js
+indexnow({
+  buildOutputDir: "./fixtures/site-dist",
+})
+```
 
 ---
 

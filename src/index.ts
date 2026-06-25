@@ -9,6 +9,7 @@ export interface IndexNowOptions {
   siteUrl?: string;
   enabled?: boolean;
   cacheDir?: string;
+  buildOutputDir?: string;
   dryRun?: boolean;
   logMode?: "quiet" | "normal" | "verbose";
   submissionMode?: "changed" | "all";
@@ -267,7 +268,15 @@ export default function indexNow(
 
         ensureCacheFile(logger);
 
-        const outDir = fileURLToPath(dir instanceof URL ? dir : new URL(dir));
+        const outDir = options.buildOutputDir
+          ? path.resolve(projectRoot, options.buildOutputDir)
+          : fileURLToPath(dir instanceof URL ? dir : new URL(dir));
+
+        if (!fs.existsSync(outDir)) {
+          throw new Error(
+            `[astro-indexnow] Build output directory not found: ${outDir}`
+          );
+        }
 
         const previousCache = loadCache(logger);
         const nextCache: Record<string, string> = {};

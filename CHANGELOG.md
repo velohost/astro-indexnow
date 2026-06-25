@@ -33,7 +33,13 @@ Use this structure for future releases:
 
 ---
 
-## [Unreleased]
+## [2.3.9] — 2026-06-25
+
+### ✨ Added
+
+- **Explicit build output selection**
+  - New `buildOutputDir` option lets the plugin scan a custom generated output directory
+  - Default Astro build output behavior remains unchanged
 
 ### 📝 Docs
 
@@ -44,6 +50,9 @@ Use this structure for future releases:
 - Added monorepo compatibility notes
   - Clarified `process.cwd()` assumptions
   - Explained how `cacheDir` behaves in nested Astro workspaces
+- Added rollback policy guidance
+  - Recommended deprecating a bad npm release when needed
+  - Clarified that fixes should ship as a patch release with a new tag and release
 
 ---
 

@@ -204,7 +204,23 @@ This file:
 
 Older flat cache files are still read automatically and will be upgraded on the next write.
 
-Deleting the file simply causes the next build to treat all pages as new.
+### When should you commit it?
+
+- Commit the cache when your site builds in an ephemeral environment such as GitHub Actions, GitLab CI, Vercel, Netlify, or a container recreated for each build.
+- Do not commit it when your deploy process reuses the same working directory and the file persists between builds.
+- If you are unsure, commit it for Git-based deploys and leave it out for long-lived servers.
+
+### What happens if you delete it?
+
+- The next build treats every generated page as new.
+- That usually means a full re-submission on the next successful build.
+- The cache is rebuilt automatically after the next successful submission run.
+
+### How does this affect CI/CD and branch builds?
+
+- In CI/CD, the cache should usually be checked in so each run can compare against the previous state.
+- For branch builds and preview environments, keep the cache separate per branch if you want branch-local change tracking.
+- If a branch does not have a prior cache, the first build behaves like a fresh site and submits every generated page.
 
 ---
 

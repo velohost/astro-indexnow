@@ -33,6 +33,17 @@ Use this structure for future releases:
 
 ---
 
+## [Unreleased]
+
+### 📝 Docs
+
+- Clarified the cache contract in the README
+  - Explained when `.astro-indexnow-cache.json` should be committed
+  - Explained what happens when the cache is deleted
+  - Explained how the cache behaves in CI/CD and branch builds
+
+---
+
 ## [2.3.8] — 2026-06-25
 
 ### 🛠 Fixed

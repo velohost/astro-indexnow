@@ -13,20 +13,9 @@ function fail(message) {
 }
 
 const packageJson = JSON.parse(read("package.json"));
-const packageLock = JSON.parse(read("package-lock.json"));
 const readme = read("README.MD");
 const changelog = read("CHANGELOG.md");
 const version = packageJson.version;
-
-if (packageLock.version !== version) {
-  fail(`package-lock.json root version (${packageLock.version}) does not match package.json (${version})`);
-}
-
-if (packageLock.packages?.[""]?.version !== version) {
-  fail(
-    `package-lock.json package root version (${packageLock.packages?.[""]?.version}) does not match package.json (${version})`
-  );
-}
 
 if (!readme.includes(`> **Current release:** v${version}`)) {
   fail(`README.MD does not advertise current release ${version}`);

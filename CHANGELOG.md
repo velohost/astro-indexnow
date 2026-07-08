@@ -33,6 +33,19 @@ Use this structure for future releases:
 
 ---
 
+## [2.3.10] — 2026-07-08
+
+### 🔄 Changed
+
+- Removed the committed npm lockfile for this published library package
+- Configured npm to avoid regenerating `package-lock.json` during local installs
+
+### 🛠 Fixed
+
+- Updated release metadata checks so they no longer require a lockfile
+
+---
+
 ## [2.3.9] — 2026-06-25
 
 ### ✨ Added
